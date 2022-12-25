@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
@@ -11,8 +12,13 @@ def index():
 
 
 @app.route('/account')
-def account():
-    return render_template('base_account.html')
+def account_main():
+    return render_template('account_main.html')
+
+
+@app.route('/account/create')
+def create():
+    return render_template('account_create.html')
 
 
 if __name__ == '__main__':
