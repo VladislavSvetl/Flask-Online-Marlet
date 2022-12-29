@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
+from cloudipsp import Api, Checkout
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///market.db'
@@ -16,7 +18,7 @@ class Item(db.Model):
     title = db.Column(db.String(100), nullable=False)
     tags = db.Column(db.String(75), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     amount = db.Column(db.Integer, nullable=False)
     active = db.Column(db.Boolean, default=True)
     date = db.Column(db.DateTime, default=datetime.utcnow)
@@ -37,6 +39,23 @@ def account_main():
     return render_template('account_main.html')
 
 
+@app.route('/buy/<int:id>')
+def item_buy(id):
+
+    item = Item.query.get(id)
+
+    api = Api(merchant_id=1396424,
+              secret_key='test')
+    checkout = Checkout(api=api)
+    data = {
+        "currency": "USD",
+        "amount": str(item.price) + '00'
+    }
+    url = checkout.url(data).get('checkout_url')
+
+    return redirect(url)
+
+
 @app.route('/success_add')
 def success_add():
     return render_template('success_add.html')
@@ -51,7 +70,7 @@ def create():
         price = request.form['price']
         amount = request.form['amount']
 
-        item = Item(title=title,tags=tags, description=description, price=price, amount=amount)
+        item = Item(title=title, tags=tags, description=description, price=price, amount=amount)
 
         try:
             db.session.add(item)
