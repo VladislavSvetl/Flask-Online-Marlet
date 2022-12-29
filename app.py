@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -33,9 +33,31 @@ def account_main():
     return render_template('account_main.html')
 
 
-@app.route('/account/create')
+@app.route('/success_add')
+def success_add():
+    return render_template('success_add.html')
+
+
+@app.route('/account/create', methods=['POST', 'GET'])
 def create():
-    return render_template('account_create.html')
+    if request.method == 'POST':
+        title = request.form['title']
+        tags = request.form['tags']
+        description = request.form['description']
+        price = request.form['price']
+        amount = request.form['amount']
+
+        item = Item(title=title,tags=tags, description=description, price=price, amount=amount)
+
+        try:
+            db.session.add(item)
+            db.session.commit()
+            return redirect('/success_add')
+        except:
+            return 'При добавлении произошла ошибка...'
+
+    else:
+        return render_template('account_create.html')
 
 
 if __name__ == '__main__':
