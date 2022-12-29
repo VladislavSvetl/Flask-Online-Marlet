@@ -21,11 +21,15 @@ class Item(db.Model):
     active = db.Column(db.Boolean, default=True)
     date = db.Column(db.DateTime, default=datetime.utcnow)
 
+    def __repr__(self):
+        return '<Item %r' %self.id
+
 
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    items = Item.query.order_by(-Item.id).all()
+    return render_template('index.html', items=items)
 
 
 @app.route('/account')

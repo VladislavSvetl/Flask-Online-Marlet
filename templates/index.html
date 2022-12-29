@@ -6,6 +6,22 @@
 
 {% block main %}
 
-<h1>Привет, мир!</h1>
+<div class="container">
+  <div class="row">
+      {% for el in items %}
+    <div class="col-4">
+      <div class="card">
+        <img src="https://texterra.ru/upload/iblock/17a/zk4qwtfo4ttmm4qrgtkne62ncyc70vyj/anons.webp" class="card-img-top" alt="Изображение">
+        <div class="card-body text-center">
+          <h6>{{ el.date.strftime("%d %B %Y") }}</h6>
+          <h3 class="card-title">{{ el.title }}</h3>
+          <h5 class="card-text">{{ el.price }} BYN</h5>
+          <a href="#" class="btn btn-primary">Подробнее</a>
+        </div>
+      </div><br><br>
+    </div>
+      {% endfor %}
+  </div>
+</div>
 
 {% endblock %}
